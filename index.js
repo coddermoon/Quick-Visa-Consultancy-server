@@ -33,6 +33,16 @@ app.get('/benifits',async(req,res)=>{
 
 })
 
+app.get('/service/:id',async(req,res)=>{
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const service = benifitCollection.findOne(query)
+   
+    res.send(service)
+
+})
+
 app.get('/services',async(req,res)=>{
     
     let query = {}
