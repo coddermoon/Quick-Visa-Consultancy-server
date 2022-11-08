@@ -34,8 +34,24 @@ app.get('/benifits',async(req,res)=>{
 })
 
 app.get('/services',async(req,res)=>{
-    const query = {}
-    const cursor = serviceCollection.find(query)
+    
+    let query = {}
+    if (req.query.limit) {
+        query = {
+            limit:req.query.limit
+        }
+    }
+    const limit= parseInt(query.limit)
+  
+    let cursor
+    
+if (!limit) {
+     cursor = serviceCollection.find(query)
+}else{
+     cursor = serviceCollection.find().limit(limit)
+}
+
+   
     const benifits =await cursor.toArray()
     res.send(benifits)
 
