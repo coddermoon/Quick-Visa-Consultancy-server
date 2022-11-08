@@ -20,6 +20,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const dbConnectRun = async()=>{
     try {
 const benifitCollection = client.db('visa-concaltant').collection('benifits')
+const serviceCollection = client.db('visa-concaltant').collection('services')
 
 
 // get benifits data 
@@ -27,6 +28,14 @@ const benifitCollection = client.db('visa-concaltant').collection('benifits')
 app.get('/benifits',async(req,res)=>{
     const query = {}
     const cursor = benifitCollection.find(query)
+    const benifits =await cursor.toArray()
+    res.send(benifits)
+
+})
+
+app.get('/services',async(req,res)=>{
+    const query = {}
+    const cursor = serviceCollection.find(query)
     const benifits =await cursor.toArray()
     res.send(benifits)
 
