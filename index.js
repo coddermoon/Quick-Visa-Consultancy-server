@@ -21,6 +21,7 @@ const dbConnectRun = async()=>{
     try {
 const benifitCollection = client.db('visa-concaltant').collection('benifits')
 const serviceCollection = client.db('visa-concaltant').collection('services')
+const reviewCollection = client.db('visa-concaltant').collection('review')
 
 
 // get benifits data 
@@ -39,6 +40,32 @@ app.get('/service/:id', async (req, res) => {
     const service = await serviceCollection.findOne(query);
     res.send(service);
 });
+
+app.get('/review', async (req, res) => {
+
+   
+   
+    const query = {};
+
+    const cursor = reviewCollection.find(query)
+    const benifits =await cursor.toArray()
+
+  
+    res.send(benifits);
+});
+
+// post a review
+
+
+app.post('/review', async (req, res) => {
+
+    const review = req.body
+   
+    const result = await reviewCollection.insertOne(review);
+    res.send(result)
+    
+});
+
 
 
 app.get('/services',async(req,res)=>{
