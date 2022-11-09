@@ -43,15 +43,12 @@ app.get('/service/:id', async (req, res) => {
 
 app.get('/review', async (req, res) => {
 
-   
-   
-    const query = {};
 
-    const cursor = reviewCollection.find(query)
-    const benifits =await cursor.toArray()
-
-  
-    res.send(benifits);
+  const query = { id:req.query.id}
+  const cursor = reviewCollection.find(query)
+  const review =await cursor.toArray()
+ res.send(review)
+    
 });
 
 // post a review
