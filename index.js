@@ -72,6 +72,16 @@ app.post('/review', async (req, res) => {
     
 });
 
+app.post('/services', async (req, res) => {
+
+    const services = req.body
+    console.log(services)
+   
+    const result = await serviceCollection.insertOne(services);
+    res.send(result)
+    
+});
+
 
 
 app.get('/services',async(req,res)=>{
