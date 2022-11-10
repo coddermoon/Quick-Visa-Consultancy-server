@@ -90,6 +90,9 @@ app.post('/review', async (req, res) => {
     
 });
 
+
+
+
 app.post('/services', async (req, res) => {
 
     const services = req.body
@@ -102,11 +105,30 @@ app.post('/services', async (req, res) => {
 
 app.delete('/review/:id', async (req, res) => {
     const id = req.params.id;
+    
     const query = { _id: ObjectId(id) };
     const result = await reviewCollection.deleteOne(query)
     res.send(result)
    
 })
+
+// data update
+
+
+
+app.get('/update/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const user = await reviewCollection.findOne(query);
+   
+    res.send(user);
+})
+
+
+
+
+ 
+
 
 
 
