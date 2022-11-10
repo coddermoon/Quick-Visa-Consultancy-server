@@ -10,6 +10,8 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+const jwt = require('jsonwebtoken')
+
 // connect to database
 
 
@@ -17,12 +19,40 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req, res, next){
+    const authHeader = req.headers.authorization;
+
+    if(!authHeader){
+        return res.status(401).send({message: 'unauthorized access'});
+    }
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decoded){
+        if(err){
+            return res.status(403).send({message: 'Forbidden access'});
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
+
+
+
 const dbConnectRun = async()=>{
     try {
 const benifitCollection = client.db('visa-concaltant').collection('benifits')
 const serviceCollection = client.db('visa-concaltant').collection('services')
 const reviewCollection = client.db('visa-concaltant').collection('review')
 const blogsCollection = client.db('visa-concaltant').collection('blogs')
+
+
+app.post('/jwt', (req, res) =>{
+    const user = req.body;
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d'})
+    console.log({token})
+   res.send({token})
+    
+}) 
 
 
 // get benifits data 
@@ -50,7 +80,12 @@ app.get('/service/:id', async (req, res) => {
     res.send(service);
 });
 
-app.get('/review', async (req, res) => {
+app.get('/review', verifyJWT, async (req, res) => {
+    const decoded = req.decoded;
+            
+    if(decoded.email !== req.query.email){
+        res.status(403).send({message: 'unauthorized access'})
+    }
     let query = {};
     // conditoon
     if (req.query.uid) {
@@ -68,8 +103,12 @@ app.get('/review', async (req, res) => {
 
 
 
-app.get('/review', async (req, res) => {
-
+app.get('/review',verifyJWT, async (req, res) => {
+    const decoded = req.decoded;
+            
+    if(decoded.email !== req.query.email){
+        res.status(403).send({message: 'unauthorized access'})
+    }
 
   const query = { id:req.query.id}
   const cursor = reviewCollection.find(query)
