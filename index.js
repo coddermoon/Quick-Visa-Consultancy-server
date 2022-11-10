@@ -124,6 +124,24 @@ app.get('/update/:id', async (req, res) => {
     res.send(user);
 })
 
+app.put('/update/:id',async(req,res)=>{
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+    const review = req.body;
+    const option = {upsert: true};
+    const updateReview = {
+        $set: {
+            commentSingle: review.commentSingle,
+            ratings: review.ratings,
+           
+        }
+        
+    }
+    const result = await reviewCollection.updateOne(filter, updateReview, option);
+    res.send(result)
+
+})
+
 
 
 
